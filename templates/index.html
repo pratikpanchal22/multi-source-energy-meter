@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Energy Meter Dashboard</title>
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+
+  <!-- Chart.js + Socket.IO -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+  <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+
+  <!-- Dashboard Logic -->
+  <script src="{{ url_for('static', filename='dashboard.js') }}" defer></script>
+</head>
+
+<body>
+  <header>
+    <h2>Energy Meter Dashboard (Local / Internal)</h2>
+  </header>
+
+  <section class="controls">
+    <button onclick="sendAction('resume')">Resume Measurement</button>
+    <button class="stop" onclick="sendAction('pause')">Pause Measurement</button>
+    <a href="/configuration" class="button-link">Configuration</a>
+  </section>
+
+  <!-- Legend for charts -->
+  <section class="chart-legend">
+    <div class="legend-item"><span class="legend-color consumed"></span> Consumed</div>
+    <div class="legend-item"><span class="legend-color generated"></span> Generated</div>
+  </section>
+
+  <!-- Data Table -->
+  <section class="data-tables">
+    <div class="table-container">
+      <table id="energyTable">
+        <thead>
+          <tr>
+            <th>Meter Name</th>
+            <th>Timestamp</th>
+            <th><span class="legend-color consumed"></span> Load Bus Voltage (V)</th>
+            <th><span class="legend-color consumed"></span> Load Bus Current (A)</th>
+            <th><span class="legend-color consumed"></span> Consumed Power (W)</th>
+            <th><span class="legend-color generated"></span> Gen Bus Voltage (V)</th>
+            <th><span class="legend-color generated"></span> Gen Bus Current (A)</th>
+            <th><span class="legend-color generated"></span> Generated Power (W)</th>
+            <th>Net Power Consumed (W)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td id="meterName">Mock Meter ID001</td>
+            <td id="timestamp">--:--:--</td>
+            <td id="consumedVoltage">0.00</td>
+            <td id="consumedCurrent">0.00</td>
+            <td id="consumedPower">0.00</td>
+            <td id="generatedVoltage">0.00</td>
+            <td id="generatedCurrent">0.00</td>
+            <td id="generatedPower">0.00</td>
+            <td id="netPower" class="net-power zero">0.00</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Charts -->
+  <section class="chart-container">
+    <div class="chart-box"><canvas id="powerChart"></canvas></div>
+    <div class="chart-box"><canvas id="voltageChart"></canvas></div>
+    <div class="chart-box"><canvas id="currentChart"></canvas></div>
+  </section>
+</body>
+</html>

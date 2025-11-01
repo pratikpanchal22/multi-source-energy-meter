@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Configuration</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  <script src="{{ url_for('static', filename='script.js') }}" defer></script>
+
+  <style>
+    /* Configuration form styling consistent with index.html theme */
+    .config-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    form {
+      background-color: #1c1c1c;
+      border: 1px solid #333;
+      border-radius: 12px;
+      padding: 20px 25px;
+      width: 100%;
+      box-shadow: 0 0 15px rgba(255,255,255,0.05);
+      text-align: left;
+    }
+
+    .section {
+      border-bottom: 1px solid #333;
+      padding-bottom: 15px;
+      margin-bottom: 20px;
+    }
+
+    h3, h4 {
+      color: #fff;
+      font-weight: 400;
+      margin-top: 10px;
+    }
+
+    label {
+      display: block;
+      color: #ddd;
+      font-weight: 500;
+      margin-top: 10px;
+      margin-bottom: 5px;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #444;
+      border-radius: 6px;
+      background-color: #222;
+      color: #f0f0f0;
+      box-sizing: border-box;
+      font-size: 15px;
+    }
+
+    input[type="checkbox"] {
+      width: auto;
+      margin-right: 6px;
+    }
+
+    input[type="file"] {
+      border: none;
+      background-color: transparent;
+      padding: 0;
+    }
+
+    button.save {
+      background-color: #3498db;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      padding: 10px 20px;
+      margin-top: 15px;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+      width: 100%;
+    }
+
+    button.save:hover {
+      background-color: #2980b9;
+    }
+
+    a.button {
+      display: inline-block;
+      background-color: #2c3e50;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 6px;
+      padding: 10px 20px;
+      margin-top: 20px;
+      transition: background-color 0.2s ease;
+    }
+
+    a.button:hover {
+      background-color: #34495e;
+    }
+
+    .checkbox-row {
+      display: flex;
+      align-items: center;
+      margin-top: 10px;
+    }
+
+  </style>
+</head>
+<body>
+  <h2>⚙️ Mock Energy Meter Configuration</h2>
+
+  <div class="config-container">
+    <form id="configForm">
+
+      <!-- Data Source Intervals -->
+      <div class="section">
+        <h3>Data Source Intervals</h3>
+        <br>
+
+        <h4>Consumed Energy Source</h4>
+        <label for="consumed_lower">Lower Bound:</label>
+        <input type="number" id="consumed_lower" name="consumed_lower" min="1" step="0.01" value="{{ consumed_lower }}">
+
+        <label for="consumed_upper">Upper Bound:</label>
+        <input type="number" id="consumed_upper" name="consumed_upper" min="1" step="0.01" value="{{ consumed_upper }}">
+
+        <h4>Generated Energy Source</h4>
+        <label for="generated_lower">Lower Bound:</label>
+        <input type="number" id="generated_lower" name="generated_lower" min="1" step="0.01" value="{{ generated_lower }}">
+
+        <label for="generated_upper">Upper Bound:</label>
+        <input type="number" id="generated_upper" name="generated_upper" min="1" step="0.01" value="{{ generated_upper }}">
+      </div>
+
+      <!-- MQTT Settings -->
+      <div class="section">
+        <h3>MQTT Settings</h3>
+
+        <div class="checkbox-row">
+          <input type="checkbox" id="mqtt_publish_enabled" name="mqtt_publish_enabled" {% if mqtt_publish_enabled %}checked{% endif %}>
+          <label for="mqtt_publish_enabled">Enable Telemetry over MQTT</label>
+        </div>
+
+        <label for="mqtt_host">MQTT Host:</label>
+        <input type="text" id="mqtt_host" name="mqtt_host" value="{{ mqtt_host }}">
+
+        <label for="mqtt_port">MQTT Port:</label>
+        <input type="number" id="mqtt_port" name="mqtt_port" value="{{ mqtt_port }}">
+
+        <label for="mqtt_username">MQTT Username:</label>
+        <input type="text" id="mqtt_username" name="mqtt_username" value="{{ mqtt_username }}">
+
+        <label for="mqtt_password">MQTT Password:</label>
+        <input type="password" id="mqtt_password" name="mqtt_password" value="{{ mqtt_password }}">
+
+        <label for="mqtt_cert">MQTT .crt File:</label>
+        <input type="file" id="mqtt_cert" name="mqtt_cert" accept=".crt">
+        {% if mqtt_cert_filename %}
+        <p>Current cert: {{ mqtt_cert_filename }}</p>
+        {% endif %}
+      </div>
+
+      <button type="submit" class="save">💾 Save Configuration</button>
+    </form>
+
+    <a href="/" class="button">⬅️ Back to Dashboard</a>
+  </div>
+
+  <script>
+    const form = document.getElementById('configForm');
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const formData = new FormData();
+      formData.append('consumed_lower', document.getElementById('consumed_lower').value);
+      formData.append('consumed_upper', document.getElementById('consumed_upper').value);
+      formData.append('generated_lower', document.getElementById('generated_lower').value);
+      formData.append('generated_upper', document.getElementById('generated_upper').value);
+      formData.append('mqtt_publish_enabled', document.getElementById('mqtt_publish_enabled').checked);
+      formData.append('mqtt_host', document.getElementById('mqtt_host').value);
+      formData.append('mqtt_port', document.getElementById('mqtt_port').value);
+      formData.append('mqtt_username', document.getElementById('mqtt_username').value);
+      formData.append('mqtt_password', document.getElementById('mqtt_password').value);
+
+      const certFile = document.getElementById('mqtt_cert').files[0];
+      if (certFile) formData.append('mqtt_cert', certFile);
+
+      const response = await fetch('/configuration', {
+        method: 'POST',
+        body: formData
+      });
+
+      const result = await response.json();
+      alert(result.message || "Configuration saved successfully!");
+    });
+  </script>
+</body>
+</html>

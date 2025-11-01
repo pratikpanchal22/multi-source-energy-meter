@@ -1,0 +1,19 @@
+# Virtual environments
+venv/
+.venv/
+
+# Logs/runtime files
+logs/
+*.log
+app.log
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Service file if machine‑specific
+# energy‑meter.service
+
+# Editor files
+.vscode/
+.idea/

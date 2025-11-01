@@ -1,0 +1,24 @@
+[Unit]
+Description=Energy Meter Flask App
+After=network.target
+
+[Service]
+Type=simple
+User=pratikpanchal
+WorkingDirectory=/home/pratikpanchal/mock-energy-meter
+# Activate the virtual environment and run app.py
+#ExecStart=/bin/bash -c "/home/pratikpanchal/mock-energy-meter/venv/bin/python3 app.py"
+ExecStart=/home/pratikpanchal/mock-energy-meter/venv/bin/python3 /home/pratikpanchal/mock-energy-meter/app.py
+Restart=always
+RestartSec=5
+Environment=PYTHONUNBUFFERED=1
+
+# Logging
+#StandardOutput=append:/home/pratikpanchal/mock-energy-meter/logs/app.log
+#StandardError=append:/home/pratikpanchal/mock-energy-meter/logs/app.err.log
+# Journald captures stdout/stderr automatically
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
